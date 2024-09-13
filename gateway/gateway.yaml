@@ -9,6 +9,15 @@ spec:
   - name: https
     protocol: HTTPS
     port: 443
+    tls:
+      mode: Terminate # If protocol is `TLS`, `Passthrough` is a possible mode
+      certificateRefs:
+      - kind: Secret
+        group: ""
+        name: whereami-nginx-demo
     allowedRoutes:
       kinds:
       - kind: HTTPRoute
+  addresses:
+  - type: NamedAddress
+    value: whereami-nginx-demo # reference the static IP created earlier

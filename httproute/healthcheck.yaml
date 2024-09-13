@@ -1,0 +1,27 @@
+apiVersion: networking.gke.io/v1
+kind: HealthCheckPolicy
+metadata:
+  name: lb-healthcheck
+  namespace: ingress-nginx
+spec:
+  default:
+    checkIntervalSec: 15
+    timeoutSec: 15
+    healthyThreshold: 1
+    unhealthyThreshold: 2
+    logConfig:
+      enabled: True
+    config:
+      type: HTTP2
+      http2HealthCheck:
+        #portSpecification: PORT_SPECIFICATION
+        port: 443
+        portName: https
+        host: whereami.example.com
+        requestPath: "/"
+        #response: RESPONSE
+        #proxyHeader: PROXY_V1
+  targetRef:
+    group: ""
+    kind: Service
+    name: ingress-nginx-controller

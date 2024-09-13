@@ -322,7 +322,8 @@ subjects:
 apiVersion: v1
 data:
   allow-snippet-annotations: "false"
-  use-proxy-protocol: "true"
+  #use-proxy-protocol: "true"
+  use-http2: "true" # added to see if HTTP/2 could work
 kind: ConfigMap
 metadata:
   labels:
@@ -358,7 +359,7 @@ spec:
     port: 80
     protocol: TCP
     targetPort: http
-  - appProtocol: https
+  - appProtocol: HTTP2 #appProtocol: https
     name: https
     port: 443
     protocol: TCP

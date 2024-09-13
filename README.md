@@ -32,15 +32,19 @@ kubectl apply -k whereami-nginx-demo/variant
 ### set up nginx ingress controller
 
 ```
-# going to apply a modified version of the nginx controller that sets service type to ClusterIP instead of LoadBalancer default and omits externalTrafficPolicy
+# going to apply a modified version of the nginx controller that sets service type to ClusterIP instead of LoadBalancer default, sets appProtocol to HTTP2, and omits externalTrafficPolicy
+# also, added use-http2: "true" to the nginx controller configMap to allow for HTTP2
+# finally, disabled use-proxy-protocol: "true" via the same configMap in nginx/controller-v1.11.2-deploy.yaml
 kubectl apply -f nginx/
 ```
 
 ### create dummy self-signed cert to use for this demo
 
 ```
-openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
+# because this is self signed, will need to use -K with curl - also initially tried this with size of 4096 but got size errors 
+openssl req -new -newkey rsa:2048 -days 365 -nodes -x509 \
  -subj "/CN=whereami.example.com/O=Edge2Mesh Inc" \
+ -addext "subjectAltName = DNS:whereami.example.com" \
  -keyout whereami.example.com.key \
  -out whereami.example.com.crt
 
@@ -59,4 +63,36 @@ kubectl -n ingress-nginx create secret tls whereami-nginx-demo \
 kubectl apply -f ingress/
 ```
 
-### 
+### create example Cloud Armor policy
+
+```
+gcloud compute security-policies create edge-fw-policy \
+  --description "Block XSS attacks"
+
+gcloud compute security-policies rules create 1000 \
+    --security-policy edge-fw-policy \
+    --expression "evaluatePreconfiguredExpr('xss-stable')" \
+    --action "deny-403" \
+    --description "XSS attack filtering"
+
+kubectl apply -f cloud-armor/
+```
+
+### set up gateway resources
+
+```
+# reserve static IP - this way if your LB gets deleted you can recreate a new one with the same public IP address
+gcloud compute addresses create whereami-nginx-demo --global # --project=$PROJECT_ID # if needed
+
+kubectl apply -f gateway/
+kubectl apply -f httproute/
+```
+
+### test endpoint 
+
+```
+# get IP address of load balancer
+GALB_IP="$(gcloud compute addresses describe whereami-nginx-demo --global --format='value(address)')"
+
+curl -k --header 'Host: whereami.example.com' https://$GALB_IP
+```

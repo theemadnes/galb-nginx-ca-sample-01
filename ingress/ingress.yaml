@@ -9,7 +9,7 @@ spec:
   ingressClassName: nginx
   tls:
   - hosts:
-      - whereami.example.com
+    - whereami.example.com
     secretName: whereami-nginx-demo
   rules:
   - host: whereami.example.com
