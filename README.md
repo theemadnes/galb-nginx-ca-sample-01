@@ -32,7 +32,7 @@ kubectl apply -k whereami-nginx-demo/variant
 ### set up nginx ingress controller
 
 ```
-# going to apply a modified version of the nginx controller that sets service type to ClusterIP instead of LoadBalancer default, sets appProtocol to HTTP2, and omits externalTrafficPolicy
+# going to apply a modified version of the nginx controller that sets service type to ClusterIP instead of LoadBalancer default, sets appProtocol to HTTP2 (instead of HTTPS), and omits externalTrafficPolicy
 # also, added use-http2: "true" to the nginx controller configMap to allow for HTTP2
 # finally, disabled use-proxy-protocol: "true" via the same configMap in nginx/controller-v1.11.2-deploy.yaml
 kubectl apply -f nginx/
