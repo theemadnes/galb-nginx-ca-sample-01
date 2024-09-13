@@ -95,4 +95,23 @@ kubectl apply -f httproute/
 GALB_IP="$(gcloud compute addresses describe whereami-nginx-demo --global --format='value(address)')"
 
 curl -k --header 'Host: whereami.example.com' https://$GALB_IP
+
+# sample output
+#$ curl -k --header 'Host: whereami.example.com' https://$GALB_IP -s | jq 
+#{
+#  "cluster_name": "gateway-nginx-test",
+#  "gce_instance_id": "6857840697694670280",
+#  "gce_service_account": "spanner-reporter-01.svc.id.goog",
+#  "host_header": "whereami.example.com",
+#  "metadata": "whereami-nginx-demo",
+#  "node_name": "gk3-gateway-nginx-test-pool-2-b6d0d56f-z8l6",
+#  "pod_ip": "10.92.128.12",
+#  "pod_name": "whereami-nginx-demo-5459d7c85d-t7m2d",
+#  "pod_name_emoji": "🗑️",
+#  "pod_namespace": "whereami-nginx-demo",
+#  "pod_service_account": "whereami-nginx-demo",
+#  "project_id": "spanner-reporter-01",
+#  "timestamp": "2024-09-13T04:03:15",
+#  "zone": "us-central1-f"
+#}
 ```
