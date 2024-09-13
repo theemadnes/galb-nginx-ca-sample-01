@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: whereami-nginx-demo-ingress
+  namespace: whereami-nginx-demo
+  #annotations:
+    #nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - whereami.example.com
+    secretName: whereami-nginx-demo
+  rules:
+  - host: whereami.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: whereami-nginx-demo
+            port:
+              number: 80
