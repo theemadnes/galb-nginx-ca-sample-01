@@ -47,6 +47,11 @@ openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 \
 kubectl -n whereami-nginx-demo create secret tls whereami-nginx-demo \
  --key=whereami.example.com.key \
  --cert=whereami.example.com.crt
+
+# put the cert in ingress-nginx as well for gateway config
+kubectl -n ingress-nginx create secret tls whereami-nginx-demo \
+ --key=whereami.example.com.key \
+ --cert=whereami.example.com.crt
 ```
 ### create ingress spec for nginx
 
